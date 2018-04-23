@@ -430,7 +430,8 @@ function encodeGeoFireObject(location, geohash) {
   return {
     ".priority": geohash,
     "g": geohash,
-    "l": location
+    "l": location,
+    "t: _firebaseRef.database.ServerValue.TIMESTAMP
   };
 }
 
