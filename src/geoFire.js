@@ -56,7 +56,10 @@ var GeoFire = function(firebaseRef) {
         validateLocation(location);
 
         var geohash = encodeGeohash(location);
-        newData[key] = encodeGeoFireObject(location, geohash);
+        newData[key] = Object.assign(
+          encodeGeoFireObject(location, geohash),
+          { "t": _firebaseRef.database.ServerValue.TIMESTAMP }
+        );
       }
     });
 
