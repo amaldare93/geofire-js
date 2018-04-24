@@ -18,13 +18,13 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    * @param {?Array.<number>} location The location as [latitude, longitude] pair
    * @param {?double} distanceFromCenter The distance from the center or null.
    */
-  function _fireCallbacksForKey(eventType, key, location, distanceFromCenter) {
+  function _fireCallbacksForKey(eventType, key, location, distanceFromCenter, locationData) {
     _callbacks[eventType].forEach(function(callback) {
       if (typeof location === "undefined" || location === null) {
         callback(key, null, null);
       }
       else {
-        callback(key, location, distanceFromCenter);
+        callback(key, location, distanceFromCenter, locationData);
       }
     });
   }
