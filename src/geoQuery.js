@@ -135,6 +135,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     var distanceFromCenter, isInQuery;
     var wasInQuery = (_locationsTracked.hasOwnProperty(key)) ? _locationsTracked[key].isInQuery : false;
     var oldLocation = (_locationsTracked.hasOwnProperty(key)) ? _locationsTracked[key].location : null;
+    var oldLocationData = (_locationsTracked.hasOwnProperty(key)) ? _locationsTracked[key].locationData : null;
 
     // Determine if the location is within this query
     distanceFromCenter = GeoFire.distance(location, _center);
@@ -143,6 +144,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     // Add this location to the locations queried dictionary even if it is not within this query
     _locationsTracked[key] = {
       location: location,
+      locationData: locationData,
       distanceFromCenter: distanceFromCenter,
       isInQuery: isInQuery,
       geohash: encodeGeohash(location, g_GEOHASH_PRECISION)
@@ -151,7 +153,12 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     // Fire the "key_entered" event if the provided key has entered this query
     if (isInQuery && !wasInQuery) {
       _fireCallbacksForKey("key_entered", key, location, distanceFromCenter, locationData);
-    } else if (isInQuery && oldLocation !== null && (location[0] !== oldLocation[0] || location[1] !== oldLocation[1])) {
+    } else if (
+      isInQuery &&
+      oldLocation !== null &&
+      (location[0] !== oldLocation[0] || location[1] !== oldLocation[1]) &&
+      oldLocationData !== locationData
+    ) {
       _fireCallbacksForKey("key_moved", key, location, distanceFromCenter, locationData);
     } else if (!isInQuery && wasInQuery) {
       _fireCallbacksForKey("key_exited", key, location, distanceFromCenter, locationData);
