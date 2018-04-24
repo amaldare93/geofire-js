@@ -817,8 +817,12 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
     } else if (
       isInQuery &&
       oldLocation !== null &&
-      (location[0] !== oldLocation[0] || location[1] !== oldLocation[1]) &&
-      oldLocationData !== locationData
+      (
+        location[0] !== oldLocation[0] ||
+        location[1] !== oldLocation[1] ||
+        // maybe shallow equality would be better for perf, but fine for now
+        oldLocationData !== locationData 
+      )
     ) {
       _fireCallbacksForKey("key_moved", key, location, distanceFromCenter, locationData);
     } else if (!isInQuery && wasInQuery) {
