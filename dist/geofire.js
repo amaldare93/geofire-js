@@ -790,7 +790,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    * @param {string} key The key of the geofire location.
    * @param {?Array.<number>} location The location as [latitude, longitude] pair.
    */
-  function _updateLocation(key, location, locationData) {
+  function _updateLocation(key, location) {
     validateLocation(location);
     // Get the key and location
     var distanceFromCenter, isInQuery;
@@ -811,11 +811,11 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
 
     // Fire the "key_entered" event if the provided key has entered this query
     if (isInQuery && !wasInQuery) {
-      _fireCallbacksForKey("key_entered", key, location, distanceFromCenter, locationData);
+      _fireCallbacksForKey("key_entered", key, location, distanceFromCenter);
     } else if (isInQuery && oldLocation !== null && (location[0] !== oldLocation[0] || location[1] !== oldLocation[1])) {
-      _fireCallbacksForKey("key_moved", key, location, distanceFromCenter, locationData);
+      _fireCallbacksForKey("key_moved", key, location, distanceFromCenter);
     } else if (!isInQuery && wasInQuery) {
-      _fireCallbacksForKey("key_exited", key, location, distanceFromCenter, locationData);
+      _fireCallbacksForKey("key_exited", key, location, distanceFromCenter);
     }
   }
 
@@ -862,8 +862,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    * @param {Firebase DataSnapshot} locationDataSnapshot A snapshot of the data stored for this location.
    */
   function _childAddedCallback(locationDataSnapshot) {
-    var locationDataVal = locationDataSnapshot.val()
-    _updateLocation(getKey(locationDataSnapshot), decodeGeoFireObject(locationDataVal), locationDataVal);
+    _updateLocation(getKey(locationDataSnapshot), decodeGeoFireObject(locationDataSnapshot.val()));
   }
 
   /**
@@ -872,8 +871,7 @@ var GeoQuery = function (firebaseRef, queryCriteria) {
    * @param {Firebase DataSnapshot} locationDataSnapshot A snapshot of the data stored for this location.
    */
   function _childChangedCallback(locationDataSnapshot) {
-    var locationDataVal = locationDataSnapshot.val()
-    _updateLocation(getKey(locationDataSnapshot), decodeGeoFireObject(locationDataVal), locationDataVal);
+    _updateLocation(getKey(locationDataSnapshot), decodeGeoFireObject(locationDataSnapshot.val()));
   }
 
   /**
