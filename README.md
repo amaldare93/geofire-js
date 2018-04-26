@@ -1,3 +1,35 @@
+# FORK NOTES
+The purpose of this fork is to allow the `set` method to take additional data and put it in the firebase node (ie: timestamp)
+
+We can now pass a third argument to `set` with an object and each property will be added to the geofire node
+
+ex:
+```js
+export function setUserLocation (uid, coords) {
+  return geoFireRef.set(uid, coords, {
+    t: database.ServerValue.TIMESTAMP,
+  })
+}
+```
+
+This payload will be surfaced via the `key_added` and `key_moved` callbacks as the fourth argument (all the raw data will be in that object including the geohash and coordinates)
+
+ex:
+```js
+this.geoQuery.on('key_entered', (key, coords, distance, payload) => {
+  if (key !== this.props.currentUserId) {
+    this.props.addUser({
+      uid: key,
+      timestamp: payload.t,
+    })
+  }
+})
+```
+
+NOTE: it will always and only use the payload passed as the 3rd argument
+If you pass an array of points to set, there is no support for each node having its own payload, it will just use whatever is passed as third argument for each node.
+This can be changed but im lazy and i dont have a usecase for it ATM
+
 # GeoFire for JavaScript [![Build Status](https://travis-ci.org/firebase/geofire-js.svg?branch=master)](https://travis-ci.org/firebase/geofire-js) [![Coverage Status](https://coveralls.io/repos/github/firebase/geofire-js/badge.svg?branch=master)](https://coveralls.io/github/firebase/geofire-js?branch=master) [![Version](https://badge.fury.io/gh/firebase%2Fgeofire-js.svg)](http://badge.fury.io/gh/firebase%2Fgeofire-js)
 
 GeoFire is an open-source library that allows you to store and query a set of keys based on their
